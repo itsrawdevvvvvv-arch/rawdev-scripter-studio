@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rawdev-scripter · Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf7f5;
+    --bg-grad:radial-gradient(1200px 600px at 85% -10%, rgba(194,65,12,.10), transparent 60%),
+              radial-gradient(900px 500px at -10% 10%, rgba(77,124,15,.09), transparent 55%);
+    --grid:rgba(28,20,15,.05);
+    --surface:#ffffff;
+    --surface-2:#f4ece6;
+    --surface-3:#efe5dd;
+    --border:rgba(28,20,15,.12);
+    --border-strong:rgba(28,20,15,.22);
+    --text:#1c1410;
+    --text-dim:#6f6057;
+    --text-faint:#9c8d83;
+    --accent:#c2410c;
+    --accent-2:#4d7c0f;
+    --accent-dim:rgba(194,65,12,.10);
+    --accent2-dim:rgba(77,124,15,.12);
+    --good:#3f6212;
+    --warn:#b45309;
+    --shadow:0 1px 2px rgba(28,20,15,.05), 0 12px 30px -18px rgba(28,20,15,.28);
+    --font-display:"Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    --font-body:"Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    --font-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --radius:14px;
+    --radius-sm:9px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#15110e;
+      --bg-grad:radial-gradient(1200px 600px at 85% -10%, rgba(249,115,22,.12), transparent 60%),
+                radial-gradient(900px 500px at -10% 10%, rgba(163,193,74,.08), transparent 55%);
+      --grid:rgba(255,255,255,.045);
+      --surface:#1f1915;
+      --surface-2:#272019;
+      --surface-3:#2f261e;
+      --border:rgba(255,255,255,.10);
+      --border-strong:rgba(255,255,255,.20);
+      --text:#f4ebe3;
+      --text-dim:#b6a496;
+      --text-faint:#8a7a6d;
+      --accent:#fb923c;
+      --accent-2:#a9c94f;
+      --accent-dim:rgba(251,146,60,.14);
+      --accent2-dim:rgba(169,201,79,.14);
+      --good:#a9c94f;
+      --warn:#fbbf24;
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 18px 40px -22px rgba(0,0,0,.7);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg);
+    background-image:var(--bg-grad);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:linear-gradient(var(--grid) 1px, transparent 1px),
+                     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:34px 34px;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.7), transparent 78%);
+  }
+  .wrap{position:relative;z-index:1;max-width:1220px;margin:0 auto;padding:34px 22px 72px}
+
+  /* ---------- header ---------- */
+  header.masthead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:26px;border-bottom:1px solid var(--border);margin-bottom:30px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand-mark{
+    width:46px;height:46px;border-radius:12px;flex:0 0 auto;
+    background:linear-gradient(145deg, var(--accent), #9a3412);
+    display:grid;place-items:center;color:#fff;font-family:var(--font-mono);font-weight:700;font-size:19px;
+    box-shadow:0 8px 20px -10px rgba(194,65,12,.8);
+  }
+  @media (prefers-color-scheme: dark){ .brand-mark{background:linear-gradient(145deg,#fb923c,#c2410c)} }
+  .brand h1{font-size:26px;line-height:1.05;margin:0;font-weight:800;letter-spacing:-.02em}
+  .brand h1 span{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:3px}
+  .brand p{margin:3px 0 0;color:var(--text-dim);font-size:13.5px;max-width:52ch}
+  .persona{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chip{
+    font-family:var(--font-mono);font-size:11.5px;letter-spacing:.02em;
+    padding:6px 11px;border-radius:999px;border:1px solid var(--border-strong);
+    background:var(--surface);color:var(--text-dim);white-space:nowrap;
+  }
+  .chip.accent{border-color:transparent;background:var(--accent-dim);color:var(--accent);font-weight:500}
+  .chip.sage{border-color:transparent;background:var(--accent2-dim);color:var(--accent-2);font-weight:500}
+
+  /* ---------- layout ---------- */
+  .studio{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:900px){ .studio{grid-template-columns:1fr} }
+
+  .panel{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .panel-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:15px 18px;border-bottom:1px solid var(--border);background:var(--surface-2);
+  }
+  .panel-head .lab{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:9px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .dot.sage{background:var(--accent-2)}
+  .panel-body{padding:18px}
+
+  /* ---------- form ---------- */
+  .field{margin-bottom:14px}
+  .field label{display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+  .field .hint{text-transform:none;letter-spacing:0;color:var(--text-faint);font-size:11px}
+  input,select,textarea{
+    width:100%;font-family:var(--font-body);font-size:14.5px;color:var(--text);
+    background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);
+    padding:9px 11px;outline:none;transition:border-color .15s, box-shadow .15s;
+  }
+  textarea{resize:vertical;min-height:96px;line-height:1.5;font-size:14px}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);background:var(--surface)}
+  select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-dim) 50%),linear-gradient(135deg,var(--text-dim) 50%,transparent 50%);background-position:calc(100% - 17px) 17px,calc(100% - 12px) 17px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:520px){ .grid2{grid-template-columns:1fr} }
+  .row-inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface-2)}
+  .seg button{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.03em;padding:8px 13px;border:0;background:transparent;color:var(--text-dim);cursor:pointer;transition:.15s}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){ .seg button[aria-pressed="true"]{color:#1a1207} }
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  button.btn{
+    font-family:var(--font-body);font-weight:600;font-size:14px;cursor:pointer;
+    border-radius:var(--radius-sm);padding:11px 18px;border:1px solid transparent;transition:.15s;
+  }
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 22px -12px rgba(194,65,12,.9)}
+  .btn-primary:hover{filter:brightness(1.06)}
+  @media (prefers-color-scheme: dark){ .btn-primary{color:#1a1207} }
+  .btn-ghost{background:transparent;border-color:var(--border-strong);color:var(--text-dim)}
+  .btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+  .btn:active{transform:translateY(1px)}
+
+  /* ---------- output ---------- */
+  .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .stat{font-family:var(--font-mono);font-size:11.5px;color:var(--text-dim);border:1px solid var(--border);border-radius:999px;padding:5px 10px;background:var(--surface-2)}
+  .stat b{color:var(--text)}
+  .stat.ok b{color:var(--good)}
+  .stat.warn b{color:var(--warn)}
+
+  .script{display:flex;flex-direction:column;gap:16px;min-height:200px}
+  .block{position:relative;padding-left:15px;border-left:2px solid var(--border-strong)}
+  .block[data-kind="hook"]{border-left-color:var(--accent)}
+  .block[data-kind="flow"]{border-left-color:var(--accent-2)}
+  .block[data-kind="cta"]{border-left-color:var(--text-faint)}
+  .block .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);display:block;margin-bottom:5px}
+  .block p{margin:0;font-size:16.5px;line-height:1.62}
+  .placeholder{color:var(--text-faint);font-size:14px;font-family:var(--font-mono);padding:26px 4px}
+
+  .vary{margin-top:20px;border-top:1px dashed var(--border);padding-top:16px}
+  .vary h4{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin:0 0 10px;font-weight:500}
+  .vary ol{margin:0;padding-left:0;list-style:none;counter-reset:v;display:flex;flex-direction:column;gap:9px}
+  .vary li{counter-increment:v;display:flex;gap:10px;font-size:14.5px;line-height:1.5}
+  .vary li::before{content:counter(v);font-family:var(--font-mono);font-size:11px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;width:19px;height:19px;flex:0 0 auto;display:grid;place-items:center;margin-top:2px}
+  .vary li em{font-family:var(--font-mono);font-style:normal;font-size:10.5px;color:var(--text-faint);letter-spacing:.05em;text-transform:uppercase;display:block;margin-top:3px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--text);color:var(--bg);font-family:var(--font-mono);font-size:12px;padding:9px 15px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------- reference ---------- */
+  .refs{margin-top:44px}
+  .refs > h2{font-size:15px;font-family:var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);font-weight:500;margin:0 0 6px}
+  .refs > p.sub{color:var(--text-faint);font-size:13.5px;margin:0 0 20px;max-width:70ch}
+  .ref-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:22px;align-items:start}
+  @media (max-width:900px){ .ref-grid{grid-template-columns:1fr} }
+  details.ref{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
+  details.ref summary{cursor:pointer;padding:15px 18px;font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:10px;list-style:none;background:var(--surface-2)}
+  details.ref summary::-webkit-details-marker{display:none}
+  details.ref summary .plus{margin-left:auto;font-family:var(--font-mono);color:var(--text-faint);font-size:16px}
+  details.ref[open] summary .plus{color:var(--accent)}
+  details.ref .inner{padding:6px 18px 18px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);font-weight:500}
+  tbody tr:hover{background:var(--surface-2)}
+  td code,.mono{font-family:var(--font-mono);font-size:12.5px;background:var(--surface-3);padding:1px 5px;border-radius:5px;color:var(--text)}
+  .rules{display:grid;gap:10px}
+  .rule{display:flex;gap:11px;font-size:13.5px;line-height:1.5}
+  .rule .n{font-family:var(--font-mono);font-size:11px;color:var(--accent-2);flex:0 0 auto;margin-top:2px}
+  .kw{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+  .kw span{font-family:var(--font-mono);font-size:11.5px;border:1px solid var(--border-strong);border-radius:999px;padding:4px 10px;color:var(--text-dim)}
+  .corpus{font-size:13.5px;line-height:1.6;color:var(--text-dim);background:var(--surface-2);border-left:2px solid var(--border-strong);padding:11px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:0 0 12px}
+  .corpus b{color:var(--text);font-weight:600;display:block;margin-bottom:4px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--border);color:var(--text-faint);font-size:12.5px;font-family:var(--font-mono);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brand">
+      <div class="brand-mark">r/</div>
+      <div>
+        <h1><span>Studio</span>rawdev-scripter</h1>
+        <p>Turn a rough brief into a ready-to-record Hinglish reel voiceover — HPSC structure, literal taps, Triple-Stack CTA, in the exact voice of the creator.</p>
+      </div>
+    </div>
+    <div class="persona">
+      <span class="chip accent">@rawde_vvvvvv</span>
+      <span class="chip">faceless · mobile-first</span>
+      <span class="chip sage">85–130 words</span>
+    </div>
+  </header>
+
+  <section class="studio">
+    <!-- INPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="lab"><span class="dot"></span>Brief</span>
+        <span class="lab" style="letter-spacing:.05em">rough bullets ok</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <label for="formula">Hook formula</label>
+          <select id="formula"></select>
+          <span class="hint">Pick one. If the brief is the next step of a series, keep Progression.</span>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="app">Tool / app</label>
+            <input id="app" type="text" placeholder="Flow AI">
+          </div>
+          <div class="field">
+            <label for="benefit">Result / benefit</label>
+            <input id="benefit" type="text" placeholder="After Effects level ka face tracking">
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="prevStep">Previous step <span class="hint">(series)</span></label>
+            <input id="prevStep" type="text" placeholder="Character banana">
+          </div>
+          <div class="field">
+            <label for="nextStep">This step <span class="hint">(series)</span></label>
+            <input id="nextStep" type="text" placeholder="uske different poses banane">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="steps">Steps — one tap per line</label>
+          <textarea id="steps" placeholder="new project create krke + icon par tap krna
+image upload krke apne character ki image daal do
+library se apna character add krlo
+apna pose describe krdo ya ChatGPT se prompt lelo"></textarea>
+          <span class="hint">Literal taps and UI labels. No explanations of why.</span>
+        </div>
+
+        <div class="field">
+          <label for="settings">Settings string</label>
+          <input id="settings" type="text" placeholder="16:9, x1, 10 sec, Omni Flash">
+        </div>
+
+        <div class="field">
+          <label for="proof">Proof / result <span class="hint">(optional — used only if you give it)</span></label>
+          <input id="proof" type="text" placeholder="official post mein bhi hai">
+        </div>
+
+        <div class="field">
+          <label>CTA style</label>
+          <div class="seg" id="ctaMode" role="group" aria-label="CTA style">
+            <button type="button" data-mode="dm" aria-pressed="true">Comment keyword → DM</button>
+            <button type="button" data-mode="pinned" aria-pressed="false">Name pinned in comments</button>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="keyword">Comment keyword</label>
+            <input id="keyword" type="text" placeholder="prompt">
+          </div>
+          <div class="field">
+            <label for="vaultLine">Vault tease <span class="hint">(optional)</span></label>
+            <input id="vaultLine" type="text" placeholder="maine 30+ prompts ready rkhe hai">
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="saveReason">Save prompt</label>
+            <input id="saveReason" type="text" placeholder="isse save krlo taaki baad mein kaam aaye">
+          </div>
+          <div class="field">
+            <label for="shareTarget">Share target</label>
+            <input id="shareTarget" type="text" placeholder="apne editor dost ko bhej do">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="gen">Generate script</button>
+          <button class="btn btn-ghost" id="example">Load example</button>
+          <button class="btn btn-ghost" id="reset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="lab"><span class="dot sage"></span>Script</span>
+        <span class="meta" id="meta"></span>
+      </div>
+      <div class="panel-body">
+        <div class="script" id="script">
+          <div class="placeholder">Fill the brief and hit Generate. The script comes out in three blocks — hook, flow, CTA.</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost" id="copy">Copy script</button>
+          <button class="btn btn-ghost" id="download">Download .txt</button>
+        </div>
+        <div class="vary" id="vary" hidden>
+          <h4>Hook variations — 3, one per formula</h4>
+          <ol id="varyList"></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFERENCE -->
+  <section class="refs">
+    <h2>Reference</h2>
+    <p class="sub">What the generator obeys. Everything here comes straight from the skill's rule set — the same rules it applies to every script it writes.</p>
+
+    <div class="ref-grid">
+      <div>
+        <details class="ref" open>
+          <summary>Hook library<span class="plus">+</span></summary>
+          <div class="inner">
+            <table>
+              <thead><tr><th>Formula</th><th>Pattern</th><th>Example</th></tr></thead>
+              <tbody>
+                <tr><td>Progression <span class="hint">(signature)</span></td><td>X toh tumne sikh liya, ab bari hai Y ki</td><td>Character toh tumne bana liya, ab bari hai uske 30 poses banane ki</td></tr>
+                <tr><td>Secret leak</td><td>Yeh secret app…</td><td>Yeh secret app tumhe after effects wala tracking free mein deta hai</td></tr>
+                <tr><td>Capability promise</td><td>Tum [pro result] apne mobile se bana skte ho</td><td>Tum After Effects level ka face tracking apne mobile se bana skte ho</td></tr>
+                <tr><td>Negative command</td><td>Stop karo … aise</td><td>Stop karo Veo 3.1 ko aise use krna</td></tr>
+                <tr><td>Pain-point diagnosis</td><td>Tumhara … kyun nahi … ho raha, yeh fix hai</td><td>Tumhara character har video mein alag kyun dikhta hai, yeh raha fix</td></tr>
+                <tr><td>Contrarian obituary</td><td>X dead hai / X jhooth hai</td><td>Professional editing paise se hoti hai, yeh jhooth hai</td></tr>
+                <tr><td>Confession / plot twist</td><td>Plot twist: …</td><td>Plot twist: yeh video maine apne phone se banaya</td></tr>
+                <tr><td>Contrarian case study</td><td>Kam X, zyada Y</td><td>only if the brief has a real result</td></tr>
+                <tr><td>Vault tease</td><td>Yeh 30+ … mere paas ready hain</td><td>Yeh 30+ prompts mere paas ready hain, chahiye?</td></tr>
+                <tr><td>Shock statistic</td><td>number + source</td><td>ONLY if the brief supplies both</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+
+        <details class="ref">
+          <summary>Dev's real scripts <span class="hint">voice corpus</span><span class="plus">+</span></summary>
+          <div class="inner">
+            <p class="corpus"><b>Flow AI poses</b>Maine tumhe character generate krna toh tumne sikh liya ab bari hai uske different-different poses banane ke. Sabse pehle tumhe flow ai par aajana hai aur yahan new project create krke, + icon par tap krna, fir image aur apne character ki image upload krdena, fir library se apna character add krlo… Baki maine tumhare liye already 30+ prompts ready rkhe hai, comment "prompt" aur main tumhe DM kr dunga. Baki follow bhi krlena, byeeeeeeee!</p>
+            <p class="corpus"><b>Face tracking</b>Tum after effects level ka face tracking effect apne mobile se bana skte ho. Chalo batata hu kaise: Sabse pehle tumhe is secret app par aana hai, fir (+) wale icon par tap krke apne video ko import krlena hai. Ab niche stabilization wale option par tap krna hai fir track par click krke… bas hogya. Baki app ki link ke liye comment krdo app main tumhe DM krdunga. Byeeeeeeee!!!</p>
+            <p class="corpus"><b>Veo 3.1</b>Tum Veo 3.1 se unlimited videos bana skte ho, woh bhi apne mobile phone se… Fir open krke setting wagera allow krlena, bas fir, video par tap krke krna hai, fir yaha se model select krlo, duration, aspect ratio, aur quality select krlo krke generate krlo… Baki app ka naam comment main pin krdiya hai. Toh isi baat par follow bhi klo byeeeeeeeee…</p>
+          </div>
+        </details>
+      </div>
+
+      <div>
+        <details class="ref" open>
+          <summary>Voice rules<span class="plus">+</span></summary>
+          <div class="inner">
+            <div class="rules">
+              <div class="rule"><span class="n">01</span><span>Hinglish in Roman script; English tech nouns kept as-is. Always <code>tum / tumhe / tumhara</code>, never "aap".</span></div>
+              <div class="rule"><span class="n">02</span><span>Short clauses joined by commas, almost no full stops. One action per clause.</span></div>
+              <div class="rule"><span class="n">03</span><span>House spellings: <code>krna krlo krdo krlena rkhlo skte ho bas hogya baki toh fir yeh yahan niche</code>.</span></div>
+              <div class="rule"><span class="n">04</span><span>Steps are taps and UI labels, never explanations of why.</span></div>
+              <div class="rule"><span class="n">05</span><span>Never open with a greeting, "aaj main", or "hello dosto".</span></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="ref" open>
+          <summary>Triple-Stack CTA<span class="plus">+</span></summary>
+          <div class="inner">
+            <div class="rules">
+              <div class="rule"><span class="n">1</span><span>Comment keyword → DM: <code>comment "keyword" aur main tumhe DM krdunga</code> (or pin the name in comments).</span></div>
+              <div class="rule"><span class="n">2</span><span>Save with a reason: <code>isse save krlo taaki baad mein kaam aaye</code>.</span></div>
+              <div class="rule"><span class="n">3</span><span>Share to a specific person: <code>apne editor dost ko bhej do</code>.</span></div>
+              <div class="rule"><span class="n">4</span><span>Then <code>baki follow bhi krlena</code>, then the sign-off <code>byeeeeeeee.......</code> — never shortened.</span></div>
+            </div>
+            <div class="kw">
+              <span>GROW</span><span>HUMAN</span><span>LENGTH</span><span>EDIT</span><span>RULES</span><span>FORMAT</span><span>TIMING</span><span>GPT</span><span>GUIDE</span><span>VIRAL</span><span>prompt</span><span>app</span><span>studio</span><span>tracking</span><span>preset</span><span>veo</span>
+            </div>
+          </div>
+        </details>
+
+        <details class="ref">
+          <summary>Proof &amp; honesty rules<span class="plus">+</span></summary>
+          <div class="inner">
+            <div class="rules">
+              <div class="rule"><span class="n">·</span><span>Never invent statistics, numbers, versions, prices, features or sources. Use only what the brief gives.</span></div>
+              <div class="rule"><span class="n">·</span><span>A shock-statistic hook fires only when the brief supplies the number <em>and</em> its source.</span></div>
+              <div class="rule"><span class="n">·</span><span>If there's proof, it lands as one quick clause inside the flow — never a separate lecture.</span></div>
+              <div class="rule"><span class="n">·</span><span>No proof? The flow falls back to <code>result screen pe aa jayega</code>.</span></div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>rawdev-scripter · studio build</span>
+    <span>HPSC · Triple-Stack · 85–130 words</span>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+// rawdev-scripter generator — pure logic, no DOM.
+// Implements the rawdev-scripter skill: hook library, HPSC 3-block structure,
+// voice rules, Triple-Stack CTA, stretched sign-off, proof/honesty rules.
+
+const SIGN_OFF = "byeeeeeeee.......";
+
+const HOOK_FORMULAS = [
+  { id: "progression", label: "Progression (signature)" },
+  { id: "secret", label: "Secret leak" },
+  { id: "capability", label: "Capability promise" },
+  { id: "negative", label: "Negative command" },
+  { id: "pain", label: "Pain-point diagnosis" },
+  { id: "obituary", label: "Contrarian obituary" },
+  { id: "plot", label: "Confession / plot twist" },
+  { id: "casestudy", label: "Contrarian case study" },
+  { id: "vault", label: "Vault tease" },
+  { id: "shock", label: "Shock statistic" },
+];
+
+function clean(s) {
+  return (s == null ? "" : String(s)).trim().replace(/\s+/g, " ");
+}
+
+// Lowercase the first letter of a clause unless it looks like a proper noun / label.
+function lowerFirst(s) {
+  if (!s) return s;
+  // Keep acronyms, ALLCAPS tokens and known proper nouns as-is.
+  return s.charAt(0).toLowerCase() + s.slice(1);
+}
+
+// Dev's house spellings applied as a final pass (consistent across every script).
+const SPELLING = [
+  [/\bkar\s*do\b/gi, "krdo"],
+  [/\bkar\s*lo\b/gi, "krlo"],
+  [/\bkar\s*l\s*ena\b/gi, "krlena"],
+  [/\bkarlo\b/gi, "krlo"],
+  [/\bkardo\b/gi, "krdo"],
+  [/\bkar\s*lena\b/gi, "krlena"],
+  [/\bho\s*gaya\b/gi, "hogya"],
+  [/\bbaaki\b/gi, "baki"],
+  [/\bbut\b/gi, "fir"],
+  [/\bphir\b/gi, "fir"],
+  [/\bniche\b/gi, "niche"],
+];
+
+function applySpelling(s) {
+  let out = s;
+  for (const [re, rep] of SPELLING) out = out.replace(re, rep);
+  return out;
+}
+
+function buildHook(formula, s) {
+  const app = clean(s.app) || "yeh app";
+  const benefit = clean(s.benefit);
+  const prev = clean(s.prevStep);
+  const next = clean(s.nextStep);
+  const subject = clean(s.subject) || app;
+  const count = clean(s.count) || "30+";
+  const items = clean(s.items) || "prompts";
+  const stat = clean(s.stat);
+  const source = clean(s.source);
+  const proof = clean(s.proof);
+
+  switch (formula) {
+    case "progression": {
+      const a = prev ? `${prev} toh tumne sikh liya` : "Yeh step toh tumne sikh liya";
+      const b = next ? `ab bari hai ${next} ki` : "ab bari hai agle step ki";
+      return `${a}, ${b}`;
+    }
+    case "secret":
+      return `Yeh secret app tumhe ${benefit || "pro-level result"} bilkul free mein deta hai`;
+    case "capability":
+      return `Tum ${benefit || "pro-level editing"} apne mobile se bana skte ho`;
+    case "negative":
+      return `Stop karo ${subject} ko aise use krna`;
+    case "pain":
+      return `Tumhara ${clean(s.painWhat) || subject} kyun nahi ${clean(s.painWhy) || "sahi"} ho raha, yeh raha fix`;
+    case "obituary":
+      return `${subject} dead hai, ${benefit || "sahi tareeka"} ab free mein hota hai`;
+    case "plot":
+      return `Plot twist: ${clean(s.plotLine) || "yeh video maine apne phone se banaya"}`;
+    case "casestudy":
+      if (proof) return `Kam ${clean(s.less) || "mehnat"}, zyada ${clean(s.more) || "result"}`;
+      // No real result -> fall back to progression-style framing (honesty rule).
+      return `Yeh ${clean(s.subject) || "trick"} sirf ${app} se possible hai, dekho kaise`;
+    case "vault":
+      return `Yeh ${count} ${items} mere paas ready hain, chahiye?`;
+    case "shock":
+      if (stat && source) return `${stat} ${source}`;
+      return `Yeh ${clean(s.subject) || "trick"} tumhe ${app} ke andar chupa mila hai`;
+    default:
+      return `${clean(s.subject) || app} ke liye yeh sabse fast tareeka hai`;
+  }
+}
+
+function buildSolution(s) {
+  const app = clean(s.app);
+  const steps = (s.steps || [])
+    .map(clean)
+    .filter(Boolean)
+    .map((x) => x.replace(/[.]+$/, ""));
+
+  const open = app ? `Sabse pehle tumhe ${app} par aana hai` : "Sabse pehle app par aana hai";
+  let body = open;
+  if (steps.length) {
+    body += ", " + steps.join(", fir ");
+  } else {
+    body += ", fir apna clip import krlena";
+  }
+  const settings = clean(s.settings);
+  if (settings) body += `, ${settings} rkhlo`;
+  const proof = clean(s.proof);
+  if (proof) body += `, aur ${lowerFirst(proof)} — result screen pe aa jayega`;
+  body += ", bas hogya.";
+  return body;
+}
+
+function buildCTA(s) {
+  const kw = clean(s.keyword) || "app";
+  const mode = s.ctaMode === "pinned" ? "pinned" : "dm";
+  const saveReason = clean(s.saveReason) || "isse save krlo taaki baad mein kaam aaye";
+  const shareTarget = clean(s.shareTarget) || "apne editor dost ko bhej do";
+
+  let cta1;
+  if (mode === "pinned") {
+    const app = clean(s.app);
+    cta1 = app
+      ? `${app} ka naam comment mein pin kr diya hai`
+      : "app ka naam comment mein pin kr diya hai";
+  } else {
+    cta1 = `comment "${kw}" aur main tumhe DM krdunga`;
+  }
+
+  // Vault / proof tease only when the brief supplies it (no invented numbers).
+  const vaultLine = clean(s.vaultLine);
+
+  let out = "Baki";
+  if (vaultLine) out += ` ${lowerFirst(vaultLine)},`;
+  out += ` ${cta1}, ${saveReason}, aur ${shareTarget}, follow bhi krlena, ${SIGN_OFF}`;
+  return out;
+}
+
+function generateScript(s) {
+  const formula = s.formula || "progression";
+  const blocks = [buildHook(formula, s), buildSolution(s), buildCTA(s)];
+  const script = applySpelling(blocks.join("\n\n"));
+  const words = script.replace(/[^\w'" ]+/g, " ").split(/\s+/).filter(Boolean).length;
+  return { script, blocks, formula, words };
+}
+
+// 3 hook variations, each a different formula, one line each.
+function hookVariations(s, primaryFormula) {
+  const order = ["progression", "capability", "secret", "negative", "pain", "plot", "vault"];
+  const out = [];
+  for (const f of order) {
+    if (f === primaryFormula) continue;
+    const h = buildHook(f, s);
+    if (h) out.push({ formula: f, line: applySpelling(h) });
+    if (out.length === 3) break;
+  }
+  return out;
+}
+
+/* ---------- UI wiring ---------- */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  // populate formulas
+  var fsel = $("formula");
+  HOOK_FORMULAS.forEach(function(f){
+    var o = document.createElement("option");
+    o.value = f.id; o.textContent = f.label;
+    fsel.appendChild(o);
+  });
+  fsel.value = "progression";
+
+  var ctaMode = "dm";
+  document.querySelectorAll("#ctaMode button").forEach(function(b){
+    b.addEventListener("click", function(){
+      ctaMode = b.getAttribute("data-mode");
+      document.querySelectorAll("#ctaMode button").forEach(function(x){
+        x.setAttribute("aria-pressed", String(x === b));
+      });
+    });
+  });
+
+  function readState(){
+    return {
+      formula: fsel.value,
+      app: $("app").value,
+      benefit: $("benefit").value,
+      prevStep: $("prevStep").value,
+      nextStep: $("nextStep").value,
+      steps: $("steps").value.split("\n"),
+      settings: $("settings").value,
+      proof: $("proof").value,
+      ctaMode: ctaMode,
+      keyword: $("keyword").value,
+      vaultLine: $("vaultLine").value,
+      saveReason: $("saveReason").value,
+      shareTarget: $("shareTarget").value
+    };
+  }
+
+  var last = null;
+
+  function render(){
+    var st = readState();
+    var r = generateScript(st);
+    last = r;
+
+    var scriptEl = $("script");
+    scriptEl.innerHTML = "";
+    var kinds = ["hook","flow","cta"];
+    var labels = ["Hook · first 3 seconds","Flow · literal taps","CTA · Triple-Stack"];
+    r.blocks.forEach(function(b, i){
+      var d = document.createElement("div");
+      d.className = "block";
+      d.setAttribute("data-kind", kinds[i]);
+      var t = document.createElement("span");
+      t.className = "tag"; t.textContent = labels[i];
+      var p = document.createElement("p"); p.textContent = b;
+      d.appendChild(t); d.appendChild(p);
+      scriptEl.appendChild(d);
+    });
+
+    var inRange = r.words >= 85 && r.words <= 130;
+    var secs = Math.round(r.words / 2.9);
+    $("meta").innerHTML =
+      '<span class="stat ' + (inRange ? "ok" : "warn") + '"><b>' + r.words + '</b> words</span>' +
+      '<span class="stat">~' + secs + 's read</span>' +
+      '<span class="stat">' + (inRange ? "in range" : "off range") + '</span>';
+
+    var vary = $("vary"), list = $("varyList");
+    list.innerHTML = "";
+    hookVariations(st, st.formula).forEach(function(v){
+      var li = document.createElement("li");
+      var wrap = document.createElement("div");
+      var span = document.createElement("span"); span.textContent = v.line;
+      var em = document.createElement("em"); em.textContent = v.formula;
+      wrap.appendChild(span); wrap.appendChild(em);
+      li.appendChild(wrap); list.appendChild(li);
+    });
+    vary.hidden = false;
+  }
+
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._h);
+    t._h = setTimeout(function(){ t.classList.remove("show"); }, 1500);
+  }
+
+  $("gen").addEventListener("click", render);
+
+  $("copy").addEventListener("click", function(){
+    if(!last) return toast("Nothing to copy yet");
+    navigator.clipboard.writeText(last.script).then(function(){ toast("Script copied"); },
+      function(){ toast("Copy failed — select manually"); });
+  });
+
+  $("download").addEventListener("click", function(){
+    if(!last) return toast("Nothing to download yet");
+    var blob = new Blob([last.script + "\n"], {type:"text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "reel-script.txt";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+    toast("Downloaded reel-script.txt");
+  });
+
+  var EXAMPLE = {
+    formula:"progression",
+    app:"Flow AI",
+    benefit:"After Effects level ka face tracking",
+    prevStep:"Character banana",
+    nextStep:"uske different-different poses banane",
+    steps:"new project create krke + icon par tap krna\nimage upload krke apne character ki image daal do\nlibrary se apna character add krlo\napna pose describe krdo ya ChatGPT se prompt lelo",
+    settings:"16:9, x1, 10 sec, Omni Flash",
+    proof:"",
+    ctaMode:"dm",
+    keyword:"prompt",
+    vaultLine:"maine 30+ prompts ready rkhe hai",
+    saveReason:"isse save krlo taaki baad mein kaam aaye",
+    shareTarget:"apne editor dost ko bhej do"
+  };
+
+  function loadExample(){
+    fsel.value = EXAMPLE.formula;
+    $("app").value = EXAMPLE.app;
+    $("benefit").value = EXAMPLE.benefit;
+    $("prevStep").value = EXAMPLE.prevStep;
+    $("nextStep").value = EXAMPLE.nextStep;
+    $("steps").value = EXAMPLE.steps;
+    $("settings").value = EXAMPLE.settings;
+    $("proof").value = EXAMPLE.proof;
+    $("keyword").value = EXAMPLE.keyword;
+    $("vaultLine").value = EXAMPLE.vaultLine;
+    $("saveReason").value = EXAMPLE.saveReason;
+    $("shareTarget").value = EXAMPLE.shareTarget;
+    ctaMode = EXAMPLE.ctaMode;
+    document.querySelectorAll("#ctaMode button").forEach(function(x){
+      x.setAttribute("aria-pressed", String(x.getAttribute("data-mode") === ctaMode));
+    });
+    render();
+  }
+
+  $("example").addEventListener("click", loadExample);
+
+  $("reset").addEventListener("click", function(){
+    ["app","benefit","prevStep","nextStep","steps","settings","proof","keyword","vaultLine","saveReason","shareTarget"].forEach(function(id){ $(id).value = ""; });
+    fsel.value = "progression";
+    ctaMode = "dm";
+    document.querySelectorAll("#ctaMode button").forEach(function(x){
+      x.setAttribute("aria-pressed", String(x.getAttribute("data-mode") === "dm"));
+    });
+    $("script").innerHTML = '<div class="placeholder">Fill the brief and hit Generate. The script comes out in three blocks — hook, flow, CTA.</div>';
+    $("meta").innerHTML = "";
+    $("vary").hidden = true;
+    last = null;
+  });
+
+  // first paint with the example so the page is never empty
+  loadExample();
+})();
+</script>
+</body>
+</html>
